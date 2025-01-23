@@ -25,3 +25,7 @@ Start React app
 npm start
 ```
 
+Rodar esse comando em caso de erro no `npm start`:
+```shell
+export NODE_OPTIONS=--openssl-legacy-provider
+```
