@@ -35,11 +35,11 @@ contract Token is ERC20 {
         0x50f95d81Eee3c9E3d03A7A9C51e31359bA1F2172
     ];
 
-    string private name = "Madfinger Token";
-    string private symbol = "MDT";
+    string private _name = "Madfinger Token";
+    string private _symbol = "MDT";
 
     // The fixed amount of tokens stored in an unsigned integer type variable.
-    uint256 private totalSupply = 1000000;
+    uint256 private _totalSupply = 1000000;
 
     // An address type variable is used to store ethereum accounts.
     address public owner;
@@ -53,39 +53,12 @@ contract Token is ERC20 {
      * The `constructor` is executed only once when the contract is created.
      * The `public` modifier makes a function callable from outside the contract.
      */
-    constructor() ERC20(name, symbol) {
+    constructor() ERC20(_name, _symbol) {
         // The totalSupply is assigned to transaction sender, which is the account
         // that is deploying the contract.
-        _mint(msg.sender, totalSupply);
+        _mint(msg.sender, _totalSupply);
         owner = msg.sender;
     }
-
-    /**
-     * A function to transfer tokens.
-     *
-     * The `external` modifier makes a function *only* callable from outside
-     * the contract.
-     */
-    // function transfer(address to, uint256 amount) external {
-    //     // Check if the transaction sender has enough tokens.
-    //     // If `require`'s first argument evaluates to `false` then the
-    //     // transaction will revert.
-    //     require(balances[msg.sender] >= amount, "Not enough tokens");
-
-    //     // Transfer the amount.
-    //     balances[msg.sender] -= amount;
-    //     balances[to] += amount;
-    // }
-
-    /**
-     * Read only function to retrieve the token balance of a given account.
-     *
-     * The `view` modifier indicates that it doesn't modify the contract's
-     * state, which allows us to call it without executing a transaction.
-     */
-    // function balanceOf(address account) external view returns (uint256) {
-    //     return balances[account];
-    // }
 
     function issueToken(uint256 amount) public {
         require(msg.sender == owner || msg.sender == professorAddress, 

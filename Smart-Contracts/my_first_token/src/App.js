@@ -11,21 +11,17 @@ function App() {
   const [tokenData, setTokenData] = useState({})
   const [amount, setAmount] = useState()
   const [userAccountId, setUserAccountId] = useState()
+  const [issueAmount, setIssueAmount] = useState()
 
   const provider = new ethers.providers.JsonRpcProvider(localBlockchainAddress)
   const signer = provider.getSigner();
 
   async function _intializeContract(init) {
-    // We first initialize ethers by creating a provider using window.ethereum
-
-    // When, we initialize the contract using that provider and the token's
-    // artifact. You can do this same thing with your contracts.
     const contract = new ethers.Contract(
       tokenAddress,
       TokenArtifact.abi,
       init
     );
-
     return contract
   }
 
@@ -34,7 +30,6 @@ function App() {
     const name = await contract.name();
     const symbol = await contract.symbol();
     const tokenData = { name, symbol }
-
     setTokenData(tokenData);
   }
 
@@ -60,16 +55,29 @@ function App() {
       console.log("Account Balance: ", balance.toString());
     }
   }
+
+  async function issueTokens() {
+    if (typeof window.ethereum !== 'undefined') {
+      await requestAccount()
+      const contract = await _intializeContract(signer)
+      const transaction = await contract.issueToken(issueAmount);
+      await transaction.wait();
+      console.log(`${issueAmount} MDToken has been issued to all colleagues.`);
+    }
+  }
+
   return (
     <div className="App">
       <header className="App-header">
-        <button onClick={_getTokenData}>get token data</button>
+        <button onClick={_getTokenData}>Get Token Data</button>
         <h1>{tokenData.name}</h1>
         <h1>{tokenData.symbol}</h1>
         <button onClick={getBalance}>Get Balance</button>
         <button onClick={sendMDToken}>Send MDToken</button>
         <input onChange={e => setUserAccountId(e.target.value)} placeholder="Account ID" />
         <input onChange={e => setAmount(e.target.value)} placeholder="Amount" />
+        <button onClick={issueTokens}>Issue Tokens</button>
+        <input onChange={e => setIssueAmount(e.target.value)} placeholder="Issue Amount" />
       </header>
     </div>
   );
