@@ -11,7 +11,7 @@ function App() {
   const [tokenData, setTokenData] = useState({})
   const [amount, setAmount] = useState()
   const [userAccountId, setUserAccountId] = useState()
-  const [issueAmount, setIssueAmount] = useState()
+  const [codinome, setCodinome] = useState("")
 
   const provider = new ethers.providers.JsonRpcProvider(localBlockchainAddress)
   const signer = provider.getSigner();
@@ -60,24 +60,35 @@ function App() {
     if (typeof window.ethereum !== 'undefined') {
       await requestAccount()
       const contract = await _intializeContract(signer)
-      const transaction = await contract.issueToken(issueAmount);
+      const transaction = await contract.issueToken(amount);
       await transaction.wait();
-      console.log(`${issueAmount} MDToken has been issued to all colleagues.`);
+      alert("Tokens emitidos com sucesso!");
     }
   }
 
   return (
     <div className="App">
       <header className="App-header">
-        <button onClick={_getTokenData}>Get Token Data</button>
-        <h1>{tokenData.name}</h1>
-        <h1>{tokenData.symbol}</h1>
-        <button onClick={getBalance}>Get Balance</button>
-        <button onClick={sendMDToken}>Send MDToken</button>
-        <input onChange={e => setUserAccountId(e.target.value)} placeholder="Account ID" />
-        <input onChange={e => setAmount(e.target.value)} placeholder="Amount" />
-        <button onClick={issueTokens}>Issue Tokens</button>
-        <input onChange={e => setIssueAmount(e.target.value)} placeholder="Issue Amount" />
+        <h1>Turing DApp</h1>
+
+        <div className="inputs">
+          <input type="text" placeholder="Codinome" value={codinome} onChange={(e) => setCodinome(e.target.value)} />
+          <input type="number" placeholder="Quantidade de TUR" value={amount} onChange={(e) => setAmount(e.target.value)} />
+          <button onClick={issueTokens}>Emitir Tokens</button>
+          <button onClick={""}>Votar</button>
+          <button onClick={""}>Ativar Votação</button>
+          <button onClick={""}>Desativar Votação</button>
+          <button onClick={""}>Atualizar Status da Votação</button>
+          <button onClick={""}>Carregar Rankings</button>
+          {/* <p>Status da votação: {votingActive ? "Ativa" : "Inativa"}</p>
+          <h2>Rankings:</h2>
+          <ul>
+          {rankings.map((entry, index) => (
+            <li key={index}>{entry.codinome}: {ethers.utils.formatEther(entry.votes)} TUR</li>
+            ))}
+            </ul> */}
+
+        </div>
       </header>
     </div>
   );

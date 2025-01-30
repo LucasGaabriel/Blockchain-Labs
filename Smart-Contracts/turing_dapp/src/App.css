@@ -28,6 +28,17 @@
   color: #61dafb;
 }
 
+.inputs {
+  display: flex;
+  flex-direction: column;
+  width: 15vw;
+}
+
+.inputs > * {
+  margin: 5px;
+  padding: 5px;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
