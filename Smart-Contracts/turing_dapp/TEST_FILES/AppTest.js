@@ -1,7 +1,7 @@
 import './App.css';
 import { ethers } from 'ethers'
 import { useState } from 'react';
-import TokenArtifact from "./artifacts/contracts/Token.sol/Token.json"
+import TokenArtifact from "./artifacts/contracts/Turing.sol/Turing.json"
 const tokenAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3"
 
 const localBlockchainAddress = 'http://localhost:8545'
