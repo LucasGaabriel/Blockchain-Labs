@@ -32,3 +32,12 @@
 .status {
     margin: 10px;
 }
+
+select {
+    height: 40px;
+    width: 350px;
+}
+
+#selector {
+    width: 350px;
+}

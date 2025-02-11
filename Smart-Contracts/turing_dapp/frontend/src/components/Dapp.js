@@ -60,7 +60,7 @@ export class Dapp extends React.Component {
             contract: null,
             codinome: "",
             amount: "",
-            votingActive: false,
+            votingActive: true,
             rankings: []
         };
 
@@ -148,12 +148,12 @@ export class Dapp extends React.Component {
             }
         };
 
-        const fetchVotingStatus = async () => {
-            if (this.state.contract) {
-                const status = await this.state.contract.votingActive();
-                this.setVotingActive(status);
-            }
-        };
+        // const fetchVotingStatus = async () => {
+        //     if (this.state.contract) {
+        //         const status = await this.state.contract.votingActive;
+        //         this.setVotingActive(status);
+        //     }
+        // };
 
         const fetchRankings = async () => {
             if (this.state.contract) {
@@ -166,15 +166,37 @@ export class Dapp extends React.Component {
             <div className="App-conteiner">
                 <h1 className="title">Turing DApp</h1>
                 <div className="inputs">
-                    <input className="form-control" type="text" placeholder="Codinome" value={this.state.codinome} onChange={(e) => this.setCodinome(e.target.value)} />
+                    {/* <input className="form-control" type="text" placeholder="Codinome" value={this.state.codinome} onChange={(e) => this.setCodinome(e.target.value)} /> */}
+                    <select id="selector" className="form-control" aria-label="Default select example" value={this.state.codinome} onChange={(e) => this.setCodinome(e.target.value)}>
+                        <option value="">Codinomes</option>
+                        <option value="nome1">Nome 1</option>
+                        <option value="nome2">Nome 2</option>
+                        <option value="nome3">Nome 3</option>
+                        <option value="nome4">Nome 4</option>
+                        <option value="nome5">Nome 5</option>
+                        <option value="nome6">Nome 6</option>
+                        <option value="nome7">Nome 7</option>
+                        <option value="nome8">Nome 8</option>
+                        <option value="nome9">Nome 9</option>
+                        <option value="nome10">Nome 10</option>
+                        <option value="nome11">Nome 11</option>
+                        <option value="nome12">Nome 12</option>
+                        <option value="nome13">Nome 13</option>
+                        <option value="nome14">Nome 14</option>
+                        <option value="nome15">Nome 15</option>
+                        <option value="nome16">Nome 16</option>
+                        <option value="nome17">Nome 17</option>
+                        <option value="nome18">Nome 18</option>
+                        <option value="nome19">Nome 19</option>
+                    </select>
                     <input className="form-control " type="number" placeholder="Quantidade de TUR" value={this.state.amount} onChange={(e) => this.setAmount(e.target.value)} />
                     <button className="btn btn-primary" onClick={issueToken}>Emitir Tokens</button>
                     <button className="btn btn-primary" onClick={vote}>Votar</button>
                     <button className="btn btn-success" onClick={() => toggleVoting(true)}>Ativar Votação</button>
                     <button className="btn btn-danger" onClick={() => toggleVoting(false)}>Desativar Votação</button>
-                    <button className="btn btn-primary" onClick={fetchVotingStatus}>Atualizar Status da Votação</button>
+                    {/* <button className="btn btn-primary" onClick={fetchVotingStatus}>Atualizar Status da Votação</button> */}
                     <button className="btn btn-warning" onClick={fetchRankings}>Carregar Rankings</button>
-                    <p className="status">Status da votação: <b>{this.votingActive ? "Ativa" : "Inativa"}</b></p>
+                    <p className="status">Status da votação: <b>{this.state.votingActive ? "Ativa" : "Inativa"}</b></p>
                     {/* <h2>Rankings:</h2>
                     <ul>
                         {this.rankings.map((entry, index) => (
@@ -264,7 +286,7 @@ export class Dapp extends React.Component {
             const p = new ethers.providers.JsonRpcProvider(localBlockchainAddress)
             this.setProvider(p);
             this.setSigner(p.getSigner());
-            const turingContract = new ethers.Contract(contractAddress, TokenArtifact.abi, p);
+            const turingContract = new ethers.Contract(contractAddress.Token, TokenArtifact.abi, p);
             this.setContract(turingContract);
         }
     }
