@@ -23,6 +23,8 @@ import { NoTokensMessage } from "./NoTokensMessage";
 // This is the default id used by the Hardhat Network
 const HARDHAT_NETWORK_ID = '31337';
 
+const localBlockchainAddress = 'http://localhost:8545'
+
 // This is an error code that indicates that the user canceled a transaction
 const ERROR_CODE_TX_REJECTED_BY_USER = 4001;
 
@@ -62,19 +64,33 @@ export class Dapp extends React.Component {
             rankings: []
         };
 
-        function setCodinome(value) {
-            this.setState({ codinome: value });
-        }
 
-        function setAmount(value) {
-            this.setState({ amount: value });
-        }
-
-        function setVotingActive(value) {
-            this.setState({ votingActive: value });
-        }
 
         this.state = this.initialState;
+    }
+
+    setCodinome(value) {
+        this.setState({ codinome: value });
+    }
+
+    setAmount(value) {
+        this.setState({ amount: value });
+    }
+
+    setVotingActive(value) {
+        this.setState({ votingActive: value });
+    }
+
+    setContract(value) {
+        this.setState({ contract: value });
+    }
+
+    setSigner(value) {
+        this.setState({ signer: value });
+    }
+
+    setProvider(value) {
+        this.setState({ provider: value });
     }
 
     render() {
@@ -108,26 +124,24 @@ export class Dapp extends React.Component {
         }
 
         const issueToken = async () => {
-            if (this.contract && this.signer) {
-                const tx = await this.contract.connect(this.signer).issueToken(this.codinome, ethers.utils.parseEther(this.amount));
+            if (this.state.contract && this.state.signer) {
+                const tx = await this.state.contract.connect(this.state.signer).issueToken(this.state.codinome, ethers.utils.parseEther(this.state.amount));
                 await tx.wait();
                 alert("Tokens emitidos com sucesso!");
             }
         };
 
         const vote = async () => {
-            console.log("Votando...");
-            if (this.contract && this.signer) {
-                console.log("Entrou no if");
-                const tx = await this.contract.connect(this.signer).vote(this.codinome, ethers.utils.parseEther(this.amount));
+            if (this.state.contract && this.state.signer) {
+                const tx = await this.state.contract.connect(this.state.signer).vote(this.state.codinome, ethers.utils.parseEther(this.state.amount));
                 await tx.wait();
                 alert("Voto realizado com sucesso!");
             }
         };
 
         const toggleVoting = async (status) => {
-            if (this.contract && this.signer) {
-                const tx = status ? await this.contract.connect(this.signer).votingOn() : await this.contract.connect(this.signer).votingOff();
+            if (this.state.contract && this.state.signer) {
+                const tx = status ? await this.state.contract.connect(this.state.signer).votingOn() : await this.state.contract.connect(this.state.signer).votingOff();
                 await tx.wait();
                 this.setVotingActive(status);
                 alert(status ? "Votação ativada!" : "Votação desativada!");
@@ -135,15 +149,15 @@ export class Dapp extends React.Component {
         };
 
         const fetchVotingStatus = async () => {
-            if (this.contract) {
-                const status = await this.contract.votingActive();
+            if (this.state.contract) {
+                const status = await this.state.contract.votingActive();
                 this.setVotingActive(status);
             }
         };
 
         const fetchRankings = async () => {
-            if (this.contract) {
-                const rankingList = await this.contract.getRankings();
+            if (this.state.contract) {
+                const rankingList = await this.state.contract.getRankings();
                 this.setRankings(rankingList);
             }
         };
@@ -152,15 +166,15 @@ export class Dapp extends React.Component {
             <div className="App-conteiner">
                 <h1 className="title">Turing DApp</h1>
                 <div className="inputs">
-                    <input className="form-control" type="text" placeholder="Codinome" value={this.codinome} onChange={(e) => this.setCodinome(e.target.value)} />
-                    <input className="form-control " type="number" placeholder="Quantidade de TUR" value={this.amount} onChange={(e) => this.setAmount(e.target.value)} />
+                    <input className="form-control" type="text" placeholder="Codinome" value={this.state.codinome} onChange={(e) => this.setCodinome(e.target.value)} />
+                    <input className="form-control " type="number" placeholder="Quantidade de TUR" value={this.state.amount} onChange={(e) => this.setAmount(e.target.value)} />
                     <button className="btn btn-primary" onClick={issueToken}>Emitir Tokens</button>
                     <button className="btn btn-primary" onClick={vote}>Votar</button>
                     <button className="btn btn-success" onClick={() => toggleVoting(true)}>Ativar Votação</button>
                     <button className="btn btn-danger" onClick={() => toggleVoting(false)}>Desativar Votação</button>
                     <button className="btn btn-primary" onClick={fetchVotingStatus}>Atualizar Status da Votação</button>
                     <button className="btn btn-warning" onClick={fetchRankings}>Carregar Rankings</button>
-                    <p>Status da votação: <b>{this.votingActive ? "Ativa" : "Inativa"}</b></p>
+                    <p className="status">Status da votação: <b>{this.votingActive ? "Ativa" : "Inativa"}</b></p>
                     {/* <h2>Rankings:</h2>
                     <ul>
                         {this.rankings.map((entry, index) => (
@@ -242,6 +256,17 @@ export class Dapp extends React.Component {
         //     </div>
         //   </div>
         // );
+    }
+
+    componentDidMount() {
+        console.log("Dapp mounted");
+        if (window.ethereum) {
+            const p = new ethers.providers.JsonRpcProvider(localBlockchainAddress)
+            this.setProvider(p);
+            this.setSigner(p.getSigner());
+            const turingContract = new ethers.Contract(contractAddress, TokenArtifact.abi, p);
+            this.setContract(turingContract);
+        }
     }
 
     componentWillUnmount() {

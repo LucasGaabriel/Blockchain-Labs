@@ -16,9 +16,19 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    width: 100%;
 }
 
-.inputs > * {
-    margin: 5px;
-    width: 100%;
+.inputs > input {
+    margin: 3px;
+    width: 350px;
+}
+
+.inputs > button {
+    margin: 3px;
+    width: 350px;
+}
+
+.status {
+    margin: 10px;
 }
