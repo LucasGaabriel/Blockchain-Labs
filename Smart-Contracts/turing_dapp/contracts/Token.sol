@@ -2,31 +2,23 @@
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "hardhat/console.sol";
 
-contract Token is ERC20, Ownable {
+contract Token is ERC20 {
+
     mapping(string => address) private codinomes;
-    mapping(address => bool) private hasVoted;
-    address private professor = 0x502542668aF09fa7aea52174b9965A7799343Df7;
-    bool public votingActive = true;
-    
-    modifier onlyAuthorized() {
-        require(msg.sender == owner() || msg.sender == professor, "Nao autorizado");
-        _;
-    }
-    
-    modifier onlyDuringVoting() {
-        require(votingActive, "Votacao desativada");
-        _;
-    }
-    
-    modifier onlyRegisteredUser(string memory codinome) {
-        require(codinomes[codinome] != address(0), "Codinome nao registrado");
-        _;
-    }
-    
-    constructor() ERC20("Turing", "TUR") Ownable(msg.sender) {
+    mapping(address => mapping(address => bool)) hasVoted;
+    mapping(string => uint256) balances;
+
+    address private professor;
+    address private owner;
+    bool private votingActive = true;
+
+    event VotingOn();
+    event VotingOff();
+    event BalancesChanged(address userAddress);
+
+    constructor() ERC20("Turing", "TUR") {
         codinomes["nome1"] = 0x70997970C51812dc3A010C7d01b50e0d17dc79C8;
         codinomes["nome2"] = 0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC;
         codinomes["nome3"] = 0x90F79bf6EB2c4f870365E785982E1f101E93b906;
@@ -46,27 +38,82 @@ contract Token is ERC20, Ownable {
         codinomes["nome17"] = 0xbDA5747bFD65F08deb54cb465eB87D40e51B197E;
         codinomes["nome18"] = 0xdD2FD4581271e230360230F9337D5c0430Bf44C0;
         codinomes["nome19"] = 0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199;
+
+        balances["nome1"] = 0;
+        balances["nome2"] = 0;
+        balances["nome3"] = 0;
+        balances["nome4"] = 0;
+        balances["nome5"] = 0;
+        balances["nome6"] = 0;
+        balances["nome7"] = 0;
+        balances["nome8"] = 0;
+        balances["nome9"] = 0;
+        balances["nome10"] = 0;
+        balances["nome11"] = 0;
+        balances["nome12"] = 0;
+        balances["nome13"] = 0;
+        balances["nome14"] = 0;
+        balances["nome15"] = 0;
+        balances["nome16"] = 0;
+        balances["nome17"] = 0;
+        balances["nome18"] = 0;
+        balances["nome19"] = 0;
+
+        owner = msg.sender;
+        professor = 0x502542668aF09fa7aea52174b9965A7799343Df7;
     }
     
-    function issueToken(string memory codinome, uint256 amount) external onlyAuthorized onlyRegisteredUser(codinome) {
-        _mint(codinomes[codinome], amount);
+    modifier onlyAuthorized() {
+        require(msg.sender == owner || msg.sender == professor, "Nao autorizado");
+        _;
     }
     
-    function vote(string memory codinome, uint256 amount) external onlyDuringVoting onlyRegisteredUser(codinome) {
+    modifier onlyDuringVoting() {
+        require(votingActive, "Votacao desativada");
+        _;
+    }
+    
+    modifier onlyRegisteredUser(string memory codinome) {
+        require(codinomes[codinome] != address(0), "Codinome nao registrado");
+        _;
+    }
+    
+    function issueToken(string memory codinome, uint256 amountSaTuring) public onlyAuthorized onlyRegisteredUser(codinome) {
+        _mint(codinomes[codinome], amountSaTuring);
+
+        balances[codinome] = balanceOf(codinomes[codinome]);
+
+        emit BalancesChanged(msg.sender);
+    }
+    
+    function vote(string memory codinome, uint256 amountSaTuring) external onlyDuringVoting onlyRegisteredUser(codinome) {
         require(codinomes[codinome] != msg.sender, "Nao pode votar em si mesmo");
-        require(amount <= 2 * 10**18, "Excede limite maximo de 2 TUR");
-        require(!hasVoted[msg.sender], "Ja votou uma vez");
+        require(amountSaTuring <= 2 * 10**18, "Excede limite maximo de 2 TUR");
+        require(!hasVoted[msg.sender][codinomes[codinome]], "Ja votou uma vez nesse usuario");
         
-        _mint(codinomes[codinome], amount);
-        _mint(msg.sender, 0.2 * 10**18);
-        hasVoted[msg.sender] = true;
+        _mint(codinomes[codinome], amountSaTuring);
+        _mint(msg.sender, amountSaTuring);
+
+        hasVoted[msg.sender][codinomes[codinome]] = true;
+
+        balances[codinome] = balanceOf(codinomes[codinome]);
+
+        emit BalancesChanged(msg.sender);
     }
     
-    function votingOn() external onlyAuthorized {
+    function votingOn() public onlyAuthorized {
         votingActive = true;
+
+        emit VotingOn();
     }
     
-    function votingOff() external onlyAuthorized {
+    function votingOff() public onlyAuthorized {
         votingActive = false;
+
+        emit VotingOff();
+    }
+
+    function getUserAddress (string memory codinome) public view returns (address) {
+        return codinomes[codinome];
     }
 }
