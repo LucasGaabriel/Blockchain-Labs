@@ -12,7 +12,7 @@ contract Token is ERC20 {
 
     address private professor;
     address private owner;
-    bool private votingActive = true;
+    bool private votingActive;
 
     event VotingOn();
     event VotingOff();
@@ -61,6 +61,8 @@ contract Token is ERC20 {
 
         owner = msg.sender;
         professor = 0x502542668aF09fa7aea52174b9965A7799343Df7;
+
+        votingActive = true;
     }
     
     modifier onlyAuthorized() {
@@ -92,7 +94,7 @@ contract Token is ERC20 {
         require(!hasVoted[msg.sender][codinomes[codinome]], "Ja votou uma vez nesse usuario");
         
         _mint(codinomes[codinome], amountSaTuring);
-        _mint(msg.sender, amountSaTuring);
+        _mint(msg.sender, 0.2 * 10**18);
 
         hasVoted[msg.sender][codinomes[codinome]] = true;
 
