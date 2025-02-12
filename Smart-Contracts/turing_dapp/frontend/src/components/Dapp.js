@@ -22,8 +22,7 @@ import { NoTokensMessage } from "./NoTokensMessage";
 
 // This is the default id used by the Hardhat Network
 const HARDHAT_NETWORK_ID = '31337';
-
-const localBlockchainAddress = 'http://localhost:8545'
+const HARDHAT_URL = 'http://localhost:8545/'
 
 // This is an error code that indicates that the user canceled a transaction
 const ERROR_CODE_TX_REJECTED_BY_USER = 4001;
@@ -281,9 +280,8 @@ export class Dapp extends React.Component {
     }
 
     componentDidMount() {
-        console.log("Dapp mounted");
         if (window.ethereum) {
-            const p = new ethers.providers.JsonRpcProvider(localBlockchainAddress)
+            const p = new ethers.providers.JsonRpcProvider(HARDHAT_URL)
             this.setProvider(p);
             this.setSigner(p.getSigner());
             const turingContract = new ethers.Contract(contractAddress.Token, TokenArtifact.abi, p);
@@ -387,8 +385,10 @@ export class Dapp extends React.Component {
     }
 
     async _updateBalance() {
-        const balance = await this._token.balanceOf(this.state.selectedAddress);
-        this.setState({ balance });
+        if (this.state.selectedAddress !== undefined) {
+            const balance = await this._token.balanceOf(this.state.selectedAddress);
+            this.setState({ balance });
+        }
     }
 
     // This method sends an ethereum transaction to transfer tokens.
