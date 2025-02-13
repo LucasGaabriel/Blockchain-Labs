@@ -127,9 +127,37 @@ export class Dapp extends React.Component {
 
         const vote = async () => {
             if (this.state.contract && this.state.signer) {
-                const tx = await this.state.contract.connect(this.state.signer).vote(this.state.codinome, ethers.utils.parseEther(this.state.amount));
-                await tx.wait();
-                alert("Voto realizado com sucesso!");
+                try {
+                    const tx = await this.state.contract.connect(this.state.signer).vote(this.state.codinome, ethers.utils.parseEther(this.state.amount));
+                    await tx.wait();
+                    alert("Voto realizado com sucesso!");
+                } catch (error) {
+                    let reason;
+
+                    // Erros do ethers.js
+                    if (error.code === "INVALID_ARGUMENT") {
+                        reason = "Verifique os dados inseridos.";
+                    } else if (error.code === "UNPREDICTABLE_GAS_LIMIT") {
+                        try {
+                            let errorReason = error.reason
+                            const regex = /'([^']+)'/;
+                            const match = errorReason.match(regex);
+
+                            if (match) {
+                                reason = match[1];
+                            } else {
+                                reason = "Não foi possível extrair a razão do erro.";
+                            }
+                        } catch (e) {
+                            reason = "Falha ao estimar gas.";
+                        }
+                    } else {
+                        reason = "Erro inesperado. Tente novamente.";
+                    }
+
+                    console.error("Erro ao votar:", error);
+                    alert(`Erro ao votar: ${reason}`);
+                }
             }
         };
 

@@ -4,7 +4,7 @@ import { NetworkErrorMessage } from "./NetworkErrorMessage";
 
 export function ConnectWallet({ connectWallet, networkError, dismiss }) {
   return (
-    <div className="container">
+    <div className="container" style={{marginTop: '40vh' }}>
       <div className="row justify-content-md-center">
         <div className="col-12 text-center">
           {/* Wallet network should be set to Localhost:8545. */}
