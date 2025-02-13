@@ -147,6 +147,7 @@ export class Dapp extends React.Component {
                 <h1 className="title">Turing DApp</h1>
                 <div className="content">
                     <div className="inputs">
+                        <h2>Votação</h2>
                         <select id="selector" className="form-control" aria-label="Default select example" value={this.state.codinome} onChange={(e) => this.setCodinome(e.target.value)}>
                             <option value="">Codinomes</option>
                             <option value="nome1">Nome 1</option>
@@ -170,11 +171,11 @@ export class Dapp extends React.Component {
                             <option value="nome19">Nome 19</option>
                         </select>
                         <input className="form-control " type="number" placeholder="Quantidade de TUR" value={this.state.amount} onChange={(e) => this.setAmount(e.target.value)} />
-                        <button className="btn btn-primary" onClick={issueToken}>Emitir Tokens</button>
                         <button className="btn btn-primary" onClick={vote}>Votar</button>
                         <button className="btn btn-success" onClick={() => toggleVoting(true)}>Ativar Votação</button>
                         <button className="btn btn-danger" onClick={() => toggleVoting(false)}>Desativar Votação</button>
-                        <p className="status">Status da votação: <b>{this.state.votingActive ? "Ativa" : "Inativa"}</b></p>
+                        <button className="btn btn-warning" onClick={issueToken}>Emitir Tokens</button>
+                        <p className="status">Status da votação: <b className={`${this.state.votingActive ? 'text-success' : 'text-danger'}`}>{this.state.votingActive ? "Ativa" : "Inativa"}</b></p>
                     </div>
                     <div className="ranking">
                         <h2>Ranking</h2>

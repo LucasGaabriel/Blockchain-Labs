@@ -21,15 +21,18 @@
     align-items: center;
     justify-content: center;
     width: 100%;
-    margin-right: 25px;
+    margin-right: 50px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px black;
+    padding: 10px;
 }
 
-.inputs > input {
+.inputs>input {
     margin: 3px;
     width: 350px;
 }
 
-.inputs > button {
+.inputs>button {
     margin: 3px;
     width: 350px;
 }
@@ -53,5 +56,18 @@ select {
     align-items: center;
     justify-content: start;
     width: 100%;
-    margin-left: 25px;
+    margin-left: 50px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px black;
+    padding: 10px 50px;
+}
+
+thead,
+tbody {
+    display: block;
+}
+
+tbody {
+    overflow-y: scroll;
+    height: 300px;
 }
