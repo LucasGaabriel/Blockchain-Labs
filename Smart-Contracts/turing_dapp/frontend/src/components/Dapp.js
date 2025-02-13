@@ -15,10 +15,6 @@ import contractAddress from "../contracts/contract-address.json";
 import { NoWalletDetected } from "./NoWalletDetected";
 import { ConnectWallet } from "./ConnectWallet";
 import { Loading } from "./Loading";
-import { Transfer } from "./Transfer";
-import { TransactionErrorMessage } from "./TransactionErrorMessage";
-import { WaitingForTransactionMessage } from "./WaitingForTransactionMessage";
-import { NoTokensMessage } from "./NoTokensMessage";
 
 // This is the default id used by the Hardhat Network
 const HARDHAT_NETWORK_ID = '31337';
@@ -146,26 +142,11 @@ export class Dapp extends React.Component {
             }
         };
 
-        // const fetchVotingStatus = async () => {
-        //     if (this.state.contract) {
-        //         const status = await this.state.contract.votingActive;
-        //         this.setVotingActive(status);
-        //     }
-        // };
-
-        // const fetchRankings = async () => {
-        //     if (this.state.contract) {
-        //         const rankingList = await this.state.contract.getRankings();
-        //         this.setRankings(rankingList);
-        //     }
-        // };
-
         return (
             <div className="App-conteiner">
                 <h1 className="title">Turing DApp</h1>
                 <div className="content">
                     <div className="inputs">
-                        {/* <input className="form-control" type="text" placeholder="Codinome" value={this.state.codinome} onChange={(e) => this.setCodinome(e.target.value)} /> */}
                         <select id="selector" className="form-control" aria-label="Default select example" value={this.state.codinome} onChange={(e) => this.setCodinome(e.target.value)}>
                             <option value="">Codinomes</option>
                             <option value="nome1">Nome 1</option>
@@ -193,27 +174,16 @@ export class Dapp extends React.Component {
                         <button className="btn btn-primary" onClick={vote}>Votar</button>
                         <button className="btn btn-success" onClick={() => toggleVoting(true)}>Ativar Votação</button>
                         <button className="btn btn-danger" onClick={() => toggleVoting(false)}>Desativar Votação</button>
-                        {/* <button className="btn btn-primary" onClick={fetchVotingStatus}>Atualizar Status da Votação</button> */}
-                        {/* <button className="btn btn-warning" onClick={fetchRankings}>Carregar Rankings</button> */}
                         <p className="status">Status da votação: <b>{this.state.votingActive ? "Ativa" : "Inativa"}</b></p>
-                        {/* <h2>Rankings:</h2>
-                    <ul>
-                        {this.rankings.map((entry, index) => (
-                            <li key={index}>{entry.codinome}: {ethers.utils.formatEther(entry.votes)} TUR</li>
-                        ))}
-                    </ul> */}
                     </div>
                     <div className="ranking">
                         <h2>Ranking</h2>
-
-
-
                         <table className="table">
                             <thead>
                                 <tr>
                                     <th scope="col">#</th>
                                     <th scope="col">Nome</th>
-                                    <th scope="col">Saldo</th>
+                                    <th scope="col">Saldo (TUR)</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -231,86 +201,10 @@ export class Dapp extends React.Component {
                                     ))}
                             </tbody>
                         </table>
-
-
-
-
                     </div>
                 </div>
             </div>
         );
-
-        // If everything is loaded, we render the application.
-        // return (
-        //   <div className="container p-4">
-        //     <div className="row">
-        //       <div className="col-12">
-        //         <h1>
-        //           {this.state.tokenData.name} ({this.state.tokenData.symbol})
-        //         </h1>
-        //         <p>
-        //           Welcome <b>{this.state.selectedAddress}</b>, you have{" "}
-        //           <b>
-        //             {this.state.balance.toString()} {this.state.tokenData.symbol}
-        //           </b>
-        //           .
-        //         </p>
-        //       </div>
-        //     </div>
-
-        //     <hr />
-
-        //     <div className="row">
-        //       <div className="col-12">
-        //         {/* 
-        //           Sending a transaction isn't an immediate action. You have to wait
-        //           for it to be mined.
-        //           If we are waiting for one, we show a message here.
-        //         */}
-        //         {this.state.txBeingSent && (
-        //           <WaitingForTransactionMessage txHash={this.state.txBeingSent} />
-        //         )}
-
-        //         {/* 
-        //           Sending a transaction can fail in multiple ways. 
-        //           If that happened, we show a message here.
-        //         */}
-        //         {this.state.transactionError && (
-        //           <TransactionErrorMessage
-        //             message={this._getRpcErrorMessage(this.state.transactionError)}
-        //             dismiss={() => this._dismissTransactionError()}
-        //           />
-        //         )}
-        //       </div>
-        //     </div>
-
-        //     <div className="row">
-        //       <div className="col-12">
-        //         {/*
-        //           If the user has no tokens, we don't show the Transfer form
-        //         */}
-        //         {this.state.balance.eq(0) && (
-        //           <NoTokensMessage selectedAddress={this.state.selectedAddress} />
-        //         )}
-
-        //         {/*
-        //           This component displays a form that the user can use to send a 
-        //           transaction and transfer some tokens.
-        //           The component doesn't have logic, it just calls the transferTokens
-        //           callback.
-        //         */}
-        //         {this.state.balance.gt(0) && (
-        //           <Transfer
-        //             transferTokens={(to, amount) =>
-        //               this._transferTokens(to, amount)
-        //             }
-        //             tokenSymbol={this.state.tokenData.symbol}
-        //           />
-        //         )}
-        //       </div>
-        //     </div>
-        //   </div>
-        // );
     }
 
     componentDidMount() {
