@@ -9,56 +9,69 @@ contract Token is ERC20 {
     mapping(address => mapping(address => bool)) hasVoted;
     mapping(string => uint256) balances;
 
+    string[] userNames = [
+        "nome1",
+        "nome2",
+        "nome3",
+        "nome4",
+        "nome5",
+        "nome6",
+        "nome7",
+        "nome8",
+        "nome9",
+        "nome10",
+        "nome11",
+        "nome12",
+        "nome13",
+        "nome14",
+        "nome15",
+        "nome16",
+        "nome17",
+        "nome18",
+        "nome19"
+    ];
+
+    address[] userAddresses = [
+        0x70997970C51812dc3A010C7d01b50e0d17dc79C8,
+        0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC,
+        0x90F79bf6EB2c4f870365E785982E1f101E93b906,
+        0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65,
+        0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc,
+        0x976EA74026E726554dB657fA54763abd0C3a0aa9,
+        0x14dC79964da2C08b23698B3D3cc7Ca32193d9955,
+        0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f,
+        0xa0Ee7A142d267C1f36714E4a8F75612F20a79720,
+        0xBcd4042DE499D14e55001CcbB24a551F3b954096,
+        0x71bE63f3384f5fb98995898A86B02Fb2426c5788,
+        0xFABB0ac9d68B0B445fB7357272Ff202C5651694a,
+        0x1CBd3b2770909D4e10f157cABC84C7264073C9Ec,
+        0xdF3e18d64BC6A983f673Ab319CCaE4f1a57C7097,
+        0xcd3B766CCDd6AE721141F452C550Ca635964ce71,
+        0x2546BcD3c84621e976D8185a91A922aE77ECEc30,
+        0xbDA5747bFD65F08deb54cb465eB87D40e51B197E,
+        0xdD2FD4581271e230360230F9337D5c0430Bf44C0,
+        0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199
+    ];
+
     address private professor;
     address private owner;
+    uint256 private totalUsers;
     bool private votingActive;
 
-    uint256 private totalUsers = 19; // Quantidade de usuários
-
-    event VotingOn();
-    event VotingOff();
     event BalancesChanged(address userAddress);
 
     constructor() ERC20("Turing", "TUR") {
-        codinomes["nome1"] = 0x70997970C51812dc3A010C7d01b50e0d17dc79C8;
-        codinomes["nome2"] = 0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC;
-        codinomes["nome3"] = 0x90F79bf6EB2c4f870365E785982E1f101E93b906;
-        codinomes["nome4"] = 0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65;
-        codinomes["nome5"] = 0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc;
-        codinomes["nome6"] = 0x976EA74026E726554dB657fA54763abd0C3a0aa9;
-        codinomes["nome7"] = 0x14dC79964da2C08b23698B3D3cc7Ca32193d9955;
-        codinomes["nome8"] = 0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f;
-        codinomes["nome9"] = 0xa0Ee7A142d267C1f36714E4a8F75612F20a79720;
-        codinomes["nome10"] = 0xBcd4042DE499D14e55001CcbB24a551F3b954096;
-        codinomes["nome11"] = 0x71bE63f3384f5fb98995898A86B02Fb2426c5788;
-        codinomes["nome12"] = 0xFABB0ac9d68B0B445fB7357272Ff202C5651694a;
-        codinomes["nome13"] = 0x1CBd3b2770909D4e10f157cABC84C7264073C9Ec;
-        codinomes["nome14"] = 0xdF3e18d64BC6A983f673Ab319CCaE4f1a57C7097;
-        codinomes["nome15"] = 0xcd3B766CCDd6AE721141F452C550Ca635964ce71;
-        codinomes["nome16"] = 0x2546BcD3c84621e976D8185a91A922aE77ECEc30;
-        codinomes["nome17"] = 0xbDA5747bFD65F08deb54cb465eB87D40e51B197E;
-        codinomes["nome18"] = 0xdD2FD4581271e230360230F9337D5c0430Bf44C0;
-        codinomes["nome19"] = 0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199;
+        require(
+            userAddresses.length == userNames.length,
+            "Tamanho do array de enderecos e nomes incompativel."
+        );
 
-        balances["nome1"] = 0;
-        balances["nome2"] = 0;
-        balances["nome3"] = 0;
-        balances["nome4"] = 0;
-        balances["nome5"] = 0;
-        balances["nome6"] = 0;
-        balances["nome7"] = 0;
-        balances["nome8"] = 0;
-        balances["nome9"] = 0;
-        balances["nome10"] = 0;
-        balances["nome11"] = 0;
-        balances["nome12"] = 0;
-        balances["nome13"] = 0;
-        balances["nome14"] = 0;
-        balances["nome15"] = 0;
-        balances["nome16"] = 0;
-        balances["nome17"] = 0;
-        balances["nome18"] = 0;
-        balances["nome19"] = 0;
+        totalUsers = userNames.length;
+
+        for (uint256 i = 0; i < totalUsers; i++) {
+            codinomes[userNames[i]] = userAddresses[i];
+            balances[userNames[i]] = 0;
+        }
 
         owner = msg.sender;
         professor = 0x502542668aF09fa7aea52174b9965A7799343Df7;
@@ -125,14 +138,10 @@ contract Token is ERC20 {
 
     function votingOn() public onlyAuthorized {
         votingActive = true;
-
-        emit VotingOn();
     }
 
     function votingOff() public onlyAuthorized {
         votingActive = false;
-
-        emit VotingOff();
     }
 
     function getUserAddress(
@@ -146,52 +155,12 @@ contract Token is ERC20 {
         view
         returns (string[] memory, uint256[] memory)
     {
-        string[] memory userNames = new string[](totalUsers);
         uint256[] memory userBalances = new uint256[](totalUsers);
 
-        uint256 index = 0;
-        for (uint256 i = 1; i <= totalUsers; i++) {
-            string memory userKey = string(
-                abi.encodePacked("nome", uintToString(i))
-            );
-            userNames[index] = userKey;
-            userBalances[index] = balances[userKey];
-            index++;
+        for (uint256 i = 0; i < totalUsers; i++) {
+            userBalances[i] = balances[userNames[i]];
         }
 
         return (userNames, userBalances);
-    }
-
-    function uintToString(uint256 v) internal pure returns (string memory) {
-        if (v == 0) {
-            return "0";
-        }
-        uint256 j = v;
-        uint256 length;
-        while (j != 0) {
-            length++;
-            j /= 10;
-        }
-        bytes memory bstr = new bytes(length);
-        while (v != 0) {
-            length -= 1;
-            bstr[length] = bytes1(uint8(48 + (v % 10)));
-            v /= 10;
-        }
-        return string(bstr);
-    }
-
-    function getCodinomeByAddress(
-        address user
-    ) internal view returns (string memory) {
-        for (uint256 i = 1; i <= totalUsers; i++) {
-            string memory userKey = string(
-                abi.encodePacked("nome", uintToString(i))
-            );
-            if (codinomes[userKey] == user) {
-                return userKey;
-            }
-        }
-        return "";
     }
 }
