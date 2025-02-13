@@ -5,7 +5,6 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "hardhat/console.sol";
 
 contract Token is ERC20 {
-
     mapping(string => address) private codinomes;
     mapping(address => mapping(address => bool)) hasVoted;
     mapping(string => uint256) balances;
@@ -13,6 +12,8 @@ contract Token is ERC20 {
     address private professor;
     address private owner;
     bool private votingActive;
+
+    uint256 private totalUsers = 19; // Quantidade de usuários
 
     event VotingOn();
     event VotingOff();
@@ -64,58 +65,133 @@ contract Token is ERC20 {
 
         votingActive = true;
     }
-    
+
     modifier onlyAuthorized() {
-        require(msg.sender == owner || msg.sender == professor, "Nao autorizado");
+        require(
+            msg.sender == owner || msg.sender == professor,
+            "Nao autorizado"
+        );
         _;
     }
-    
+
     modifier onlyDuringVoting() {
         require(votingActive, "Votacao desativada");
         _;
     }
-    
+
     modifier onlyRegisteredUser(string memory codinome) {
         require(codinomes[codinome] != address(0), "Codinome nao registrado");
         _;
     }
-    
-    function issueToken(string memory codinome, uint256 amountSaTuring) public onlyAuthorized onlyRegisteredUser(codinome) {
+
+    function issueToken(
+        string memory codinome,
+        uint256 amountSaTuring
+    ) public onlyAuthorized onlyRegisteredUser(codinome) {
         _mint(codinomes[codinome], amountSaTuring);
 
         balances[codinome] = balanceOf(codinomes[codinome]);
 
         emit BalancesChanged(msg.sender);
     }
-    
-    function vote(string memory codinome, uint256 amountSaTuring) external onlyDuringVoting onlyRegisteredUser(codinome) {
-        require(codinomes[codinome] != msg.sender, "Nao pode votar em si mesmo");
-        require(amountSaTuring <= 2 * 10**18, "Excede limite maximo de 2 TUR");
-        require(!hasVoted[msg.sender][codinomes[codinome]], "Ja votou uma vez nesse usuario");
-        
+
+    function vote(
+        string memory codinome,
+        uint256 amountSaTuring
+    ) external onlyDuringVoting onlyRegisteredUser(codinome) {
+        require(
+            codinomes[codinome] != msg.sender,
+            "Nao pode votar em si mesmo"
+        );
+        require(
+            amountSaTuring <= 2 * 10 ** 18,
+            "Excede limite maximo de 2 TUR"
+        );
+        require(
+            !hasVoted[msg.sender][codinomes[codinome]],
+            "Ja votou uma vez nesse usuario"
+        );
+
         _mint(codinomes[codinome], amountSaTuring);
-        _mint(msg.sender, 0.2 * 10**18);
+        _mint(msg.sender, 0.2 * 10 ** 18);
 
         hasVoted[msg.sender][codinomes[codinome]] = true;
 
         balances[codinome] = balanceOf(codinomes[codinome]);
 
-        emit BalancesChanged(msg.sender);
+        emit BalancesChanged(codinomes[codinome]); // Emite para o usuário que recebeu o voto
+        emit BalancesChanged(msg.sender); // Emite para o votante
     }
-    
+
     function votingOn() public onlyAuthorized {
         votingActive = true;
 
         emit VotingOn();
     }
-    
+
     function votingOff() public onlyAuthorized {
         votingActive = false;
 
         emit VotingOff();
     }
 
-    function getUserAddress (string memory codinome) public view returns (address) {
+    function getUserAddress(
+        string memory codinome
+    ) public view returns (address) {
         return codinomes[codinome];
+    }
+
+    function getUsersBalances()
+        public
+        view
+        returns (string[] memory, uint256[] memory)
+    {
+        string[] memory userNames = new string[](totalUsers);
+        uint256[] memory userBalances = new uint256[](totalUsers);
+
+        uint256 index = 0;
+        for (uint256 i = 1; i <= totalUsers; i++) {
+            string memory userKey = string(
+                abi.encodePacked("nome", uintToString(i))
+            );
+            userNames[index] = userKey;
+            userBalances[index] = balances[userKey];
+            index++;
+        }
+
+        return (userNames, userBalances);
+    }
+
+    function uintToString(uint256 v) internal pure returns (string memory) {
+        if (v == 0) {
+            return "0";
+        }
+        uint256 j = v;
+        uint256 length;
+        while (j != 0) {
+            length++;
+            j /= 10;
+        }
+        bytes memory bstr = new bytes(length);
+        while (v != 0) {
+            length -= 1;
+            bstr[length] = bytes1(uint8(48 + (v % 10)));
+            v /= 10;
+        }
+        return string(bstr);
+    }
+
+    function getCodinomeByAddress(
+        address user
+    ) internal view returns (string memory) {
+        for (uint256 i = 1; i <= totalUsers; i++) {
+            string memory userKey = string(
+                abi.encodePacked("nome", uintToString(i))
+            );
+            if (codinomes[userKey] == user) {
+                return userKey;
+            }
+        }
+        return "";
     }
 }

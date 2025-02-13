@@ -8,7 +8,11 @@
 }
 
 .title {
-    margin: 20px;
+    margin-bottom: 50px;
+}
+
+.content {
+    display: flex;
 }
 
 .inputs {
@@ -17,6 +21,7 @@
     align-items: center;
     justify-content: center;
     width: 100%;
+    margin-right: 25px;
 }
 
 .inputs > input {
@@ -40,4 +45,13 @@ select {
 
 #selector {
     width: 350px;
+}
+
+.ranking {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+    width: 100%;
+    margin-left: 25px;
 }

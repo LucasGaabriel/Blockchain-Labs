@@ -60,10 +60,9 @@ export class Dapp extends React.Component {
             codinome: "",
             amount: "",
             votingActive: true,
-            rankings: []
+            userNames: [],
+            userBalances: []
         };
-
-
 
         this.state = this.initialState;
     }
@@ -154,54 +153,89 @@ export class Dapp extends React.Component {
         //     }
         // };
 
-        const fetchRankings = async () => {
-            if (this.state.contract) {
-                const rankingList = await this.state.contract.getRankings();
-                this.setRankings(rankingList);
-            }
-        };
+        // const fetchRankings = async () => {
+        //     if (this.state.contract) {
+        //         const rankingList = await this.state.contract.getRankings();
+        //         this.setRankings(rankingList);
+        //     }
+        // };
 
         return (
             <div className="App-conteiner">
                 <h1 className="title">Turing DApp</h1>
-                <div className="inputs">
-                    {/* <input className="form-control" type="text" placeholder="Codinome" value={this.state.codinome} onChange={(e) => this.setCodinome(e.target.value)} /> */}
-                    <select id="selector" className="form-control" aria-label="Default select example" value={this.state.codinome} onChange={(e) => this.setCodinome(e.target.value)}>
-                        <option value="">Codinomes</option>
-                        <option value="nome1">Nome 1</option>
-                        <option value="nome2">Nome 2</option>
-                        <option value="nome3">Nome 3</option>
-                        <option value="nome4">Nome 4</option>
-                        <option value="nome5">Nome 5</option>
-                        <option value="nome6">Nome 6</option>
-                        <option value="nome7">Nome 7</option>
-                        <option value="nome8">Nome 8</option>
-                        <option value="nome9">Nome 9</option>
-                        <option value="nome10">Nome 10</option>
-                        <option value="nome11">Nome 11</option>
-                        <option value="nome12">Nome 12</option>
-                        <option value="nome13">Nome 13</option>
-                        <option value="nome14">Nome 14</option>
-                        <option value="nome15">Nome 15</option>
-                        <option value="nome16">Nome 16</option>
-                        <option value="nome17">Nome 17</option>
-                        <option value="nome18">Nome 18</option>
-                        <option value="nome19">Nome 19</option>
-                    </select>
-                    <input className="form-control " type="number" placeholder="Quantidade de TUR" value={this.state.amount} onChange={(e) => this.setAmount(e.target.value)} />
-                    <button className="btn btn-primary" onClick={issueToken}>Emitir Tokens</button>
-                    <button className="btn btn-primary" onClick={vote}>Votar</button>
-                    <button className="btn btn-success" onClick={() => toggleVoting(true)}>Ativar Votação</button>
-                    <button className="btn btn-danger" onClick={() => toggleVoting(false)}>Desativar Votação</button>
-                    {/* <button className="btn btn-primary" onClick={fetchVotingStatus}>Atualizar Status da Votação</button> */}
-                    <button className="btn btn-warning" onClick={fetchRankings}>Carregar Rankings</button>
-                    <p className="status">Status da votação: <b>{this.state.votingActive ? "Ativa" : "Inativa"}</b></p>
-                    {/* <h2>Rankings:</h2>
+                <div className="content">
+                    <div className="inputs">
+                        {/* <input className="form-control" type="text" placeholder="Codinome" value={this.state.codinome} onChange={(e) => this.setCodinome(e.target.value)} /> */}
+                        <select id="selector" className="form-control" aria-label="Default select example" value={this.state.codinome} onChange={(e) => this.setCodinome(e.target.value)}>
+                            <option value="">Codinomes</option>
+                            <option value="nome1">Nome 1</option>
+                            <option value="nome2">Nome 2</option>
+                            <option value="nome3">Nome 3</option>
+                            <option value="nome4">Nome 4</option>
+                            <option value="nome5">Nome 5</option>
+                            <option value="nome6">Nome 6</option>
+                            <option value="nome7">Nome 7</option>
+                            <option value="nome8">Nome 8</option>
+                            <option value="nome9">Nome 9</option>
+                            <option value="nome10">Nome 10</option>
+                            <option value="nome11">Nome 11</option>
+                            <option value="nome12">Nome 12</option>
+                            <option value="nome13">Nome 13</option>
+                            <option value="nome14">Nome 14</option>
+                            <option value="nome15">Nome 15</option>
+                            <option value="nome16">Nome 16</option>
+                            <option value="nome17">Nome 17</option>
+                            <option value="nome18">Nome 18</option>
+                            <option value="nome19">Nome 19</option>
+                        </select>
+                        <input className="form-control " type="number" placeholder="Quantidade de TUR" value={this.state.amount} onChange={(e) => this.setAmount(e.target.value)} />
+                        <button className="btn btn-primary" onClick={issueToken}>Emitir Tokens</button>
+                        <button className="btn btn-primary" onClick={vote}>Votar</button>
+                        <button className="btn btn-success" onClick={() => toggleVoting(true)}>Ativar Votação</button>
+                        <button className="btn btn-danger" onClick={() => toggleVoting(false)}>Desativar Votação</button>
+                        {/* <button className="btn btn-primary" onClick={fetchVotingStatus}>Atualizar Status da Votação</button> */}
+                        {/* <button className="btn btn-warning" onClick={fetchRankings}>Carregar Rankings</button> */}
+                        <p className="status">Status da votação: <b>{this.state.votingActive ? "Ativa" : "Inativa"}</b></p>
+                        {/* <h2>Rankings:</h2>
                     <ul>
                         {this.rankings.map((entry, index) => (
                             <li key={index}>{entry.codinome}: {ethers.utils.formatEther(entry.votes)} TUR</li>
                         ))}
                     </ul> */}
+                    </div>
+                    <div className="ranking">
+                        <h2>Ranking</h2>
+
+
+
+                        <table className="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Nome</th>
+                                    <th scope="col">Saldo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {[...this.state.userNames.map((name, index) => ({
+                                    name,
+                                    balance: this.state.userBalances[index]
+                                }))]
+                                    .sort((a, b) => b.balance.sub(a.balance)) // Ordena do maior para o menor saldo
+                                    .map(({ name, balance }, index) => (
+                                        <tr key={index}>
+                                            <th scope="row">{index + 1}</th>
+                                            <td>{name}</td>
+                                            <td>{ethers.utils.formatUnits(balance, 18)}</td>
+                                        </tr>
+                                    ))}
+                            </tbody>
+                        </table>
+
+
+
+
+                    </div>
                 </div>
             </div>
         );
@@ -286,6 +320,12 @@ export class Dapp extends React.Component {
             this.setSigner(p.getSigner());
             const turingContract = new ethers.Contract(contractAddress.Token, TokenArtifact.abi, p);
             this.setContract(turingContract);
+
+            // Escutar evento BalancesChanged
+            turingContract.on("BalancesChanged", async (userAddress) => {
+                // console.log(`Saldo atualizado para: ${userAddress}`);
+                await this.updateBalances();
+            });
         }
     }
 
@@ -293,6 +333,19 @@ export class Dapp extends React.Component {
         // We poll the user's balance, so we have to stop doing that when Dapp
         // gets unmounted
         this._stopPollingData();
+
+        if (this.state.contract) {
+            this.state.contract.removeAllListeners("BalancesChanged");
+        }
+    }
+
+    async updateBalances() {
+        try {
+            const [userNames, userBalances] = await this.state.contract.getUsersBalances();
+            this.setState({ userNames, userBalances });
+        } catch (error) {
+            console.error("Erro ao buscar saldos:", error);
+        }
     }
 
     async _connectWallet() {
