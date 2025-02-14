@@ -76,7 +76,9 @@ export class Dapp extends React.Component {
     }
 
     setContract(value) {
-        this.setState({ contract: value });
+        this.setState({ contract: value }, () => {
+            this.getUserNames();
+        });
     }
 
     setSigner(value) {
@@ -178,25 +180,9 @@ export class Dapp extends React.Component {
                         <h2>Votação</h2>
                         <select id="selector" className="form-control" aria-label="Default select example" value={this.state.codinome} onChange={(e) => this.setCodinome(e.target.value)}>
                             <option value="">Codinomes</option>
-                            <option value="nome1">Nome 1</option>
-                            <option value="nome2">Nome 2</option>
-                            <option value="nome3">Nome 3</option>
-                            <option value="nome4">Nome 4</option>
-                            <option value="nome5">Nome 5</option>
-                            <option value="nome6">Nome 6</option>
-                            <option value="nome7">Nome 7</option>
-                            <option value="nome8">Nome 8</option>
-                            <option value="nome9">Nome 9</option>
-                            <option value="nome10">Nome 10</option>
-                            <option value="nome11">Nome 11</option>
-                            <option value="nome12">Nome 12</option>
-                            <option value="nome13">Nome 13</option>
-                            <option value="nome14">Nome 14</option>
-                            <option value="nome15">Nome 15</option>
-                            <option value="nome16">Nome 16</option>
-                            <option value="nome17">Nome 17</option>
-                            <option value="nome18">Nome 18</option>
-                            <option value="nome19">Nome 19</option>
+                            {this.state.userNames.map((name, index) => (
+                                <option key={index} value={name}>{name}</option>
+                            ))}
                         </select>
                         <input className="form-control " type="number" placeholder="Quantidade de TUR" value={this.state.amount} onChange={(e) => this.setAmount(e.target.value)} />
                         <button className="btn btn-primary" onClick={vote}>Votar</button>
@@ -268,6 +254,15 @@ export class Dapp extends React.Component {
             this.setState({ userNames, userBalances });
         } catch (error) {
             console.error("Erro ao buscar saldos:", error);
+        }
+    }
+
+    async getUserNames() {
+        try {
+            const userNames = await this.state.contract.getUserNames();
+            this.setState({ userNames });
+        } catch (error) {
+            console.error("Erro ao buscar nomes:", error);
         }
     }
 

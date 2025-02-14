@@ -10,6 +10,7 @@ contract Token is ERC20 {
     mapping(string => uint256) balances;
 
     string[] userNames = [
+        "Contract Deployer",
         "nome1",
         "nome2",
         "nome3",
@@ -28,10 +29,12 @@ contract Token is ERC20 {
         "nome16",
         "nome17",
         "nome18",
-        "nome19"
+        "nome19",
+        "Lucas Gabriel"
     ];
 
     address[] userAddresses = [
+        0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266,
         0x70997970C51812dc3A010C7d01b50e0d17dc79C8,
         0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC,
         0x90F79bf6EB2c4f870365E785982E1f101E93b906,
@@ -50,7 +53,8 @@ contract Token is ERC20 {
         0x2546BcD3c84621e976D8185a91A922aE77ECEc30,
         0xbDA5747bFD65F08deb54cb465eB87D40e51B197E,
         0xdD2FD4581271e230360230F9337D5c0430Bf44C0,
-        0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199
+        0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199,
+        0x256Da363b243D1f24bDca8931a81840Ecb693A7f
     ];
 
     address private professor;
@@ -162,5 +166,9 @@ contract Token is ERC20 {
         }
 
         return (userNames, userBalances);
+    }
+
+    function getUserNames() public view returns (string[] memory) {
+        return userNames;
     }
 }
