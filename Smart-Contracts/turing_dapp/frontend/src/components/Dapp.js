@@ -206,12 +206,12 @@ export class Dapp extends React.Component {
                                     name,
                                     balance: this.state.userBalances[index]
                                 }))]
-                                    .sort((a, b) => b.balance.sub(a.balance)) // Ordena do maior para o menor saldo
+                                    .sort((a, b) => ethers.BigNumber.from(b.balance || 0).sub(ethers.BigNumber.from(a.balance || 0))) // Ordena do maior para o menor saldo
                                     .map(({ name, balance }, index) => (
                                         <tr key={index}>
                                             <th scope="row">{index + 1}</th>
                                             <td>{name}</td>
-                                            <td>{ethers.utils.formatUnits(balance, 18)}</td>
+                                            <td>{ethers.utils.formatUnits(balance || "0", 18)}</td>
                                         </tr>
                                     ))}
                             </tbody>

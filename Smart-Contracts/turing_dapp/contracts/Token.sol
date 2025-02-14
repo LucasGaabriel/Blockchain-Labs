@@ -117,7 +117,7 @@ contract Token is ERC20 {
         uint256 amountSaTuring
     ) external onlyDuringVoting onlyRegisteredUser(codinome) {
         require(
-            codinomes[codinome] != msg.sender,
+            msg.sender != codinomes[codinome],
             "Nao pode votar em si mesmo"
         );
         require(
@@ -135,6 +135,14 @@ contract Token is ERC20 {
         hasVoted[msg.sender][codinomes[codinome]] = true;
 
         balances[codinome] = balanceOf(codinomes[codinome]);
+
+        // Atualiza o saldo do votante
+        for (uint256 i = 0; i < totalUsers; i++) {
+            if (userAddresses[i] == msg.sender) {
+                balances[userNames[i]] = balanceOf(userAddresses[i]);
+                break;
+            }
+        }
 
         emit BalancesChanged(codinomes[codinome]); // Emite para o usuário que recebeu o voto
         emit BalancesChanged(msg.sender); // Emite para o votante
