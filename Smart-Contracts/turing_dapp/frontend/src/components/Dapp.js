@@ -224,7 +224,8 @@ export class Dapp extends React.Component {
 
     componentDidMount() {
         if (window.ethereum) {
-            const p = new ethers.providers.JsonRpcProvider(HARDHAT_URL)
+            const p = new ethers.providers.Web3Provider(window.ethereum)
+            p.send("eth_requestAccounts", [])
             this.setProvider(p);
             this.setSigner(p.getSigner());
             const turingContract = new ethers.Contract(contractAddress.Token, TokenArtifact.abi, p);
